@@ -19,14 +19,12 @@ def production_suggestion(db: Session = Depends(get_db)):
     Priority: higher product value first (greedy strategy).
     """
 
-    # 1) Load products (descending by value)
     products: List[Product] = (
         db.query(Product)
         .order_by(Product.value.desc())
         .all()
     )
 
-    # 2) Load raw materials and build a mutable "stock snapshot"
     raw_materials: List[RawMaterial] = db.query(RawMaterial).all()
 
     # IMPORTANT: your RawMaterial uses stock_quantity (per your Swagger)
@@ -36,7 +34,6 @@ def production_suggestion(db: Session = Depends(get_db)):
         qty = rm.stock_quantity if rm.stock_quantity is not None else 0
         stock[rm.id] = int(qty)
 
-    # 3) Load BOM relations (product <-> raw material)
     relations: List[ProductRawMaterial] = (
         db.query(ProductRawMaterial)
         .options(
@@ -46,7 +43,6 @@ def production_suggestion(db: Session = Depends(get_db)):
         .all()
     )
 
-    # Group relations by product_id
     rel_by_product: Dict[int, List[ProductRawMaterial]] = {}
     for rel in relations:
         rel_by_product.setdefault(rel.product_id, []).append(rel)
@@ -55,16 +51,13 @@ def production_suggestion(db: Session = Depends(get_db)):
     total_value = Decimal("0.00")
 
     for p in products:
-        # Skip products without BOM
         bom = rel_by_product.get(p.id)
         if not bom:
             continue
 
-        # Skip if any relation references missing raw material
         if any(rel.raw_material is None for rel in bom):
             continue
 
-        # 4) Compute max units producible based on limiting raw material
         max_units = None
 
         for rel in bom:
@@ -81,12 +74,10 @@ def production_suggestion(db: Session = Depends(get_db)):
         if not max_units or max_units <= 0:
             continue
 
-        # 5) Consume stock (greedy: high value first)
         for rel in bom:
             required = int(rel.quantity_required or 0)
             stock[rel.raw_material_id] -= required * max_units
 
-        # 6) Compute totals using Product.value (NOT price)
         unit_value = Decimal(str(p.value))
         product_total = (unit_value * Decimal(max_units)).quantize(Decimal("0.01"))
         total_value += product_total

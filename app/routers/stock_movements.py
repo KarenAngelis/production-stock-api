@@ -23,7 +23,6 @@ def list_movements(db: Session = Depends(get_db)):
 
 @router.post("/", response_model=StockMovementResponse)
 def create_movement(payload: StockMovementCreate, db: Session = Depends(get_db)):
-    # 1) Buscar o item correto conforme o item_type
     if payload.item_type == "product":
         item = db.get(Product, payload.item_id)
         if not item:
@@ -33,7 +32,6 @@ def create_movement(payload: StockMovementCreate, db: Session = Depends(get_db))
         if not item:
             raise HTTPException(status_code=404, detail="Raw material not found")
 
-    # 2) Garantir que o campo de saldo exista
     if not hasattr(item, "stock_quantity"):
         raise HTTPException(
             status_code=500,
@@ -43,7 +41,6 @@ def create_movement(payload: StockMovementCreate, db: Session = Depends(get_db))
     current_qty = Decimal(str(item.stock_quantity or 0))
     qty = Decimal(str(payload.quantity))
 
-    # 3) Calcular novo saldo (regras de movimento)
     if payload.movement_type == "in":
         new_qty = current_qty + qty
 
@@ -56,11 +53,8 @@ def create_movement(payload: StockMovementCreate, db: Session = Depends(get_db))
         new_qty = current_qty - qty
 
     else:  # adjust
-        # Ajuste: aqui vamos interpretar como "setar para o valor"
-        # (se você quiser que adjust seja "+/-", eu adapto depois)
         new_qty = qty
 
-    # 4) Salvar movimento + atualizar saldo com transação
     movement = StockMovement(
         item_type=payload.item_type,
         item_id=payload.item_id,
