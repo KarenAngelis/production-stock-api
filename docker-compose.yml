@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:15
@@ -15,14 +13,18 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   backend:
-    build: ./app
+    build: 
+      context: .
+      dockerfile: ./app/Dockerfile 
     container_name: production_stock_api
-    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    # Ajustado para encontrar o main.py dentro da pasta app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     volumes:
-      - ./app:/code
+      - .:/code
     ports:
       - "8000:8000"
     environment:
+      - PYTHONPATH=/code
       - DATABASE_URL=postgresql+psycopg://postgres:postgres@db:5432/production_stock
       - STRICT_DB=1
     depends_on:

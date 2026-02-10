@@ -1,15 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.database import Base, engine
+from .database import Base, engine
 
-# ✅ IMPORTA OS MODELS (pra registrar no Base antes do create_all)
-from app.models.product import Product  # noqa: F401
-from app.models.raw_material import RawMaterial  # noqa: F401
-from app.models.product_raw_material import ProductRawMaterial  # noqa: F401
-from app.models.stock_movement import StockMovement  # noqa: F401
+from app.models.product import Product  
+from app.models.raw_material import RawMaterial  
+from app.models.product_raw_material import ProductRawMaterial  
+from app.models.stock_movement import StockMovement  
 
-# Routers
+
 from app.routers.product import router as product_router
 from app.routers.raw_material import router as raw_material_router
 from app.routers.product_raw_material import router as product_raw_material_router
