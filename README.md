@@ -16,6 +16,12 @@ StockMaster helps a small manufacturer maintain products, raw materials and reci
 
 The Playwright workflow uploads `test-evidence` for 14 days. Open the completed run, download the artifact, and open `frontend/playwright-report/index.html`; screenshots and a short recording of the real product-creation flow are included. A failure is visible in Actions rather than being recorded as a successful test.
 
+## Product flow
+
+![Product persisted after a real API request and page reload](docs/media/stockmaster-products.png)
+
+[Watch the short automated product-creation recording](docs/media/stockmaster-product-demo.webm). Captured from the passing [GitHub Actions run](https://github.com/KarenAngelis/production-stock-api/actions/runs/34251580407), using fictional data and the real API. The automated recording is approximately two seconds long.
+
 ## Architecture and decisions
 
 ```mermaid
@@ -73,6 +79,8 @@ Playwright starts the real API with a temporary SQLite database and the React ap
 
 ## Try the isolated portfolio demo
 
+[Open the private demo](https://stockmaster-karen-demo.kdenich16.chatgpt.site) — owner access required; not yet a public recruiter link.
+
 ```bash
 cd frontend
 REACT_APP_DEMO_MODE=true npm run build
@@ -82,7 +90,7 @@ This optional build reuses the real interface with fictional data stored in the 
 
 ## Verification and scope
 
-The API suite passed locally on Python 3.12: **8 tests**. CI is the source of truth for each published revision. Four dependency deprecation warnings remain. A normal production frontend build was verified locally. Docker execution was not verified in this environment because Docker is unavailable.
+The API suite passed locally on Python 3.12: **8 tests**. The [GitHub Actions run](https://github.com/KarenAngelis/production-stock-api/actions/runs/34251580407) also passed all 8 API tests and the full-stack Playwright test. CI is the source of truth for each published revision. Four dependency deprecation warnings remain. A normal production frontend build was verified locally. Docker execution was not verified in this environment because Docker is unavailable.
 
 StockMaster is a portfolio project. Its API currently has no authentication, and it must not be exposed with real inventory data. Before a shared production rollout: add authorization, migrations, server-side validation of all business entities, PostgreSQL concurrency/integration tests, backups and operational monitoring. The browser demo does not assert those capabilities.
 

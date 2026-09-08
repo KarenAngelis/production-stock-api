@@ -2,6 +2,8 @@
 
 ## Published browser demo
 
+Owner-private deployment: https://stockmaster-karen-demo.kdenich16.chatgpt.site . This link currently requires the owner's access and is not a public recruiter link. It was deployed successfully on 2026-09-08.
+
 The portfolio demo uses `REACT_APP_DEMO_MODE=true` at build time. It is a static React build with per-tab fictional data. It has no backend or database connection, so visitors cannot change a shared inventory. Hash-based routing keeps all screens accessible on static hosting.
 
 Normal application builds leave this variable unset or set it to `false`; they call the real FastAPI backend. CI end-to-end tests explicitly disable demo mode.

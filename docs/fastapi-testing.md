@@ -73,3 +73,8 @@ Execução local pelo Codex em 08/09/2026:
 
 Este trabalho assistido não equivale a uma certificação nem comprova, sozinho,
 domínio independente da ferramenta.
+
+
+## Atualização — estoque e CI
+
+A suíte agora contém 8 testes, incluindo retirada com saldo insuficiente, retirada exata, quantidades inválidas e falha injetada depois de executar INSERT/UPDATE e antes do commit. O teste verifica em novas requisições que o saldo e o histórico não mudaram após rollback. Consulte `tests/test_stock_movements.py` e o workflow `quality.yml`. O histórico acima descreve a primeira etapa de três testes.
