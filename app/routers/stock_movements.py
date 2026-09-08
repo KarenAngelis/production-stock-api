@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
 from decimal import Decimal
 
 from app.database import get_db
@@ -24,11 +25,11 @@ def list_movements(db: Session = Depends(get_db)):
 @router.post("/", response_model=StockMovementResponse)
 def create_movement(payload: StockMovementCreate, db: Session = Depends(get_db)):
     if payload.item_type == "product":
-        item = db.get(Product, payload.item_id)
+        item = db.execute(select(Product).where(Product.id == payload.item_id).with_for_update()).scalar_one_or_none()
         if not item:
             raise HTTPException(status_code=404, detail="Product not found")
     else:  # raw_material
-        item = db.get(RawMaterial, payload.item_id)
+        item = db.execute(select(RawMaterial).where(RawMaterial.id == payload.item_id).with_for_update()).scalar_one_or_none()
         if not item:
             raise HTTPException(status_code=404, detail="Raw material not found")
 
@@ -67,8 +68,8 @@ def create_movement(payload: StockMovementCreate, db: Session = Depends(get_db))
         db.add(movement)
         item.stock_quantity = new_qty  # atualiza saldo
         db.commit()
-        db.refresh(movement)
-        return movement
-    except Exception as e:
+    except SQLAlchemyError:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Error creating movement: {str(e)}")
+        raise HTTPException(status_code=500, detail="Unable to save stock movement") from None
+    db.refresh(movement)
+    return movement

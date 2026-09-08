@@ -33,7 +33,7 @@ export default function Products() {
 
   const canSave = useMemo(() => {
     const p = Number(value);
-    return code.trim() && name.trim() && !Number.isNaN(p);
+    return code.trim() && name.trim() && value.trim() && Number.isFinite(p) && p >= 0;
   }, [code, name, value]);
 
   async function onCreate() {
@@ -102,7 +102,7 @@ export default function Products() {
         </header>
 
         {error ? (
-          <div className="bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl p-4 mb-6">
+          <div role="alert" className="bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl p-4 mb-6">
             <p className="font-bold">Ops!</p>
             <p className="text-sm mt-1">{error}</p>
           </div>
@@ -118,18 +118,21 @@ export default function Products() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <input
               className="border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200"
+              aria-label="Código do produto"
               placeholder="Código (ex: P001)"
               value={code}
               onChange={(e) => setCode(e.target.value)}
             />
             <input
               className="border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200"
+              aria-label="Nome do produto"
               placeholder="Nome do produto"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
             <input
               className="border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200"
+              aria-label="Preço do produto"
               placeholder="Preço (ex: 10.50)"
               value={value}
               onChange={(e) => setValue(e.target.value)}
