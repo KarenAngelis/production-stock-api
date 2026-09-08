@@ -1,6 +1,6 @@
 // src/App.js
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import AppLayout from "./layouts/AppLayout";
 
@@ -11,9 +11,11 @@ import Recipes from "./pages/Recipes/Recipes";
 import StockMovements from "./pages/StockMovements/StockMovements";
 
 
+const Router = process.env.REACT_APP_DEMO_MODE === "true" ? HashRouter : BrowserRouter;
+
 export default function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -27,6 +29,6 @@ export default function App() {
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }

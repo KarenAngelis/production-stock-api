@@ -34,6 +34,10 @@ function normalizeErrorMessage(data, fallback) {
  * helper: monta URL + trata JSON/erros
  */
 async function fetchJson(path, options = {}) {
+  if (process.env.REACT_APP_DEMO_MODE === "true") {
+    const { demoRequest } = await import("./demoApi");
+    return demoRequest(path, options);
+  }
   const url = `${API_URL}${path}`;
 
   const headers = {

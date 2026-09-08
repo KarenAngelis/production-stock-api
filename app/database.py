@@ -22,7 +22,7 @@ if not DATABASE_URL:
     DATABASE_URL = f"sqlite:///{sqlite_path}"
     print("⚠️ DATABASE_URL não encontrada. Usando SQLite local.")
 
-print("DB URL:", DATABASE_URL)
+print("Database backend:", DATABASE_URL.split(":", 1)[0])
 
 if DATABASE_URL.startswith("sqlite"):
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
