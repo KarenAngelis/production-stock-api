@@ -79,7 +79,7 @@ Playwright starts the real API with a temporary SQLite database and the React ap
 
 ## Try the isolated portfolio demo
 
-[Open the private demo](https://stockmaster-karen-demo.kdenich16.chatgpt.site) — owner access required; not yet a public recruiter link.
+[Open the public demo](https://stockmaster-karen-demo.kdenich16.chatgpt.site) — publicly accessible and ready to share with recruiters.
 
 ```bash
 cd frontend
